@@ -200,14 +200,19 @@ struct CleanupView: View {
                             .buttonStyle(.borderless)
                     }
 
-                    VStack(spacing: 0) {
-                        ForEach(result.candidates) { candidate in
-                            candidateRow(candidate)
-                            if candidate.id != result.candidates.last?.id { Divider() }
+                    ScrollView(.vertical) {
+                        LazyVStack(spacing: 0) {
+                            ForEach(result.candidates) { candidate in
+                                candidateRow(candidate)
+                                if candidate.id != result.candidates.last?.id { Divider() }
+                            }
                         }
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
-                    .frame(maxHeight: 360)
+                    .frame(height: 360)
+                    .scrollIndicators(.visible)
+                    .background(Color.primary.opacity(0.025), in: RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
 
                     Divider()
                     HStack(alignment: .center) {
