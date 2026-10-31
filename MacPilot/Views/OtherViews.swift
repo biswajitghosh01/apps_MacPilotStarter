@@ -23,24 +23,6 @@ struct DebloatView: View {
     }
 }
 
-struct PerformanceView: View {
-    private let snapshot = SystemInfoService().snapshot()
-
-    var body: some View {
-        FeaturePlaceholderView(
-            title: "Performance",
-            subtitle: "System-level performance monitoring will be added in a later milestone.",
-            symbol: "gauge.with.dots.needle.67percent",
-            status: "Basic hardware information available",
-            details: [
-                "Logical processors: \(snapshot.processorCount)",
-                "Installed memory: \(SystemSnapshot.bytes(snapshot.physicalMemoryBytes))",
-                "CPU, memory pressure and process-level telemetry are not yet implemented"
-            ]
-        )
-    }
-}
-
 struct FeaturePlaceholderView: View {
     let title: String
     let subtitle: String
