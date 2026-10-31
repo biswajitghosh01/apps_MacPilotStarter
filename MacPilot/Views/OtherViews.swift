@@ -68,9 +68,9 @@ struct DebloatView: View {
                         }
                     }
                 } else if selectedFolder != nil && !isScanning && errorMessage == nil {
-                    ContentUnavailableView("No login agents found", systemImage: "tray", description: Text("No valid plist records were found in the selected folder."))
+                    emptyState("No login agents found", detail: "No valid plist records were found in the selected folder.", symbol: "tray")
                 } else {
-                    ContentUnavailableView("Review background items", systemImage: "slider.horizontal.3", description: Text("Choose your user LaunchAgents folder to inspect login jobs."))
+                    emptyState("Review background items", detail: "Choose your user LaunchAgents folder to inspect login jobs.", symbol: "slider.horizontal.3")
                 }
                 GroupBox("What this screen does not do") {
                     VStack(alignment: .leading, spacing: 8) {
@@ -120,6 +120,17 @@ struct DebloatView: View {
             records = []
             errorMessage = "The selected folder could not be read. Check macOS privacy permissions and try again."
         }
+    }
+
+    private func emptyState(_ title: String, detail: String, symbol: String) -> some View {
+        VStack(spacing: 10) {
+            Image(systemName: symbol).font(.system(size: 30)).foregroundStyle(.secondary)
+            Text(title).font(.headline)
+            Text(detail).font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(28)
+        .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 12))
     }
 
     private func summaryMetric(_ title: String, value: String) -> some View {
