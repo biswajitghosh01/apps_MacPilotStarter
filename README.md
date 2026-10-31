@@ -83,7 +83,7 @@ Scan reports contain:
 - A file-extension breakdown (up to 12 groups).
 - Skipped/unreadable item counts and a visible truncation warning when the configured scan-entry cap is reached.
 
-The observed bytes are not represented as guaranteed reclaimable storage. Directory packages are not traversed, symbolic links are skipped, and scans are capped at 50,000 entries to bound resource use. Scanned file paths are shown in-memory for review and are not written to the SQLite audit log.
+The observed bytes are not represented as guaranteed reclaimable storage. Directory packages are not traversed, symbolic links are skipped, and scans are capped at 250,000 entries to bound resource use. Scanned file paths are shown in-memory for review and are not written to the SQLite audit log.
 
 ### Upgrade an existing Phase 1 checkout
 
@@ -103,7 +103,7 @@ Use the bundle identifier you already selected when running the bootstrap. Do no
 
 The XCTest suite covers the permitted cache root, system/protected path denial, symlink-root denial, read-only behaviour, file-size and extension summaries, symlink-entry exclusion, and scan-entry truncation.
 
-Phase 3 adds a bounded, separately tested Trash-only workflow. See the section below for its current limits and remaining risks.
+Phase 3 adds a bounded, separately tested Trash-only workflow. The entry and candidate caps are conservative resource limits; reaching either cap marks the scan incomplete and disables cleanup until a complete scan is available. See the section below for its current limits and remaining risks.
 
 
 ## Phase 2.1 test-fixture correction
@@ -122,7 +122,7 @@ Phase 3 adds a distinct `CleanupCandidateScanner` and `CleanupExecutor`. The can
 - Current-user-owned, non-executable regular files only; no folders, package descendants, symbolic links, hidden files, special files, nested mount points or files with multiple hard links.
 - Excludes database, SQLite, preference, JSON, lock, PID, socket, key, certificate and provisioning-profile extensions.
 - Skips selected browser and personal-communication cache path markers.
-- Maximum 20,000 enumerated entries and 250 candidates per scan. Incomplete scans disable cleanup.
+- Maximum 250,000 enumerated entries and 2,000 candidates per scan. Incomplete scans disable cleanup.
 - Maximum 100 individually selected files per cleanup batch. No default selection is made.
 
 ### Cleanup execution
