@@ -215,3 +215,17 @@ cd "/absolute/path/to/your/MacPilotStarter"
 7. Repeat with a bundle ID beginning `com.apple.`, a symlink bundle, a nested app and a currently running app; each must be blocked or excluded.
 
 Do not begin by testing an app from your main `/Applications` folder. Use a disposable test account or VM. App bundle removal is destructive even though it uses Trash, and restoration is not guaranteed in every filesystem condition.
+
+
+## Phase 4.1 – Build identity correction
+
+The direct and App Store targets must have distinct bundle identifiers. The direct target retains the existing starter identifier `com.example.macpilot`; the App Store target uses `com.example.macpilot.appstore`. Both are placeholders and must be replaced with identifiers registered to the developer before distribution. The direct identifier is intentionally preserved to avoid changing the identity of an existing direct-build installation.
+
+After changing `project.yml`, regenerate the Xcode project before building:
+
+```bash
+xcodegen generate --spec project.yml
+xcodebuild -list -project MacPilot.xcodeproj
+```
+
+Do not submit an archive while either target still uses a `com.example` identifier.
