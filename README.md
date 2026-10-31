@@ -235,3 +235,8 @@ Do not submit an archive while either target still uses a `com.example` identifi
 
 The Performance screen samples macOS system load averages and VM memory page counters every five seconds. Load average is not CPU utilisation; the interface labels it separately and compares it with logical processor count. Memory figures are estimates and may not match Activity Monitor's memory-pressure display. No process termination, priority changes, privileged commands or system setting changes are performed.
 
+
+
+## Phase 5.2 – Read-only Debloat inventory
+
+Debloat Manager can inspect plist metadata in the current user's `~/Library/LaunchAgents` folder only. It does not inspect system LaunchDaemons or other users, and it does not unload, disable, edit or delete any service. A login agent is not automatically considered unnecessary; review its publisher and purpose independently before making changes in macOS settings.
