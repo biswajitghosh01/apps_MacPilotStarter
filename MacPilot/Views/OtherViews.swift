@@ -6,22 +6,135 @@ struct AppManagerView: View {
     }
 }
 
+import SwiftUI
+import AppKit
+
 struct DebloatView: View {
+    @State private var records: [LaunchAgentRecord] = []
+    @State private var selectedFolder: URL?
+    @State private var skippedCount = 0
+    @State private var truncated = false
+    @State private var errorMessage: String?
+    @State private var isScanning = false
+
+    private let inventory = LaunchAgentInventory()
+
     var body: some View {
-        FeaturePlaceholderView(
-            title: "Debloat Manager",
-            subtitle: "Review login items and background services without disabling macOS protections.",
-            symbol: "slider.horizontal.3",
-            status: "Planned for Phase 5",
-            details: [
-                "Login item inventory using supported macOS APIs",
-                "Third-party background item review",
-                "No automatic changes to launchd configuration",
-                "No disabling of Apple services or security controls"
-            ]
-        )
+        ScrollView {
+            VStack(alignment: .leading, spacing: 22) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Debloat Manager").font(.system(size: 28, weight: .bold, design: .rounded))
+                    Text("Review your user login agents. MacPilot does not disable or remove services.")
+                        .font(.subheadline).foregroundStyle(.secondary)
+                }
+                GroupBox {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Label("Read-only inventory", systemImage: "lock.shield.fill").font(.headline).foregroundStyle(.green)
+                        Text("Only plist files directly inside ~/Library/LaunchAgents are inspected. System LaunchDaemons, global LaunchAgents and Apple services are outside this scan.")
+                            .font(.caption).foregroundStyle(.secondary)
+                        HStack {
+                            Button("Choose LaunchAgents Folder") { chooseFolder() }.buttonStyle(.borderedProminent)
+                            Button("Scan again") { scanSelectedFolder() }.buttonStyle(.bordered)
+                                .disabled(selectedFolder == nil || isScanning)
+                        }
+                        if let selectedFolder {
+                            Text(selectedFolder.path).font(.caption.monospaced()).foregroundStyle(.secondary).textSelection(.enabled)
+                        }
+                    }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 6)
+                }
+                if let errorMessage {
+                    Label(errorMessage, systemImage: "exclamationmark.triangle.fill").font(.callout).foregroundStyle(.orange)
+                }
+                if !records.isEmpty {
+                    HStack(spacing: 12) {
+                        summaryMetric("Found", value: "\(records.count)")
+                        summaryMetric("Skipped", value: "\(skippedCount)")
+                        summaryMetric("Scan limit", value: truncated ? "Reached" : "Not reached")
+                    }
+                    ForEach(records) { record in
+                        GroupBox {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack(alignment: .firstTextBaseline) {
+                                    Text(record.label).font(.headline)
+                                    Spacer()
+                                    Text(record.fileName).font(.caption.monospaced()).foregroundStyle(.secondary)
+                                }
+                                Text(record.program).font(.caption.monospaced()).foregroundStyle(.secondary).textSelection(.enabled)
+                                HStack(spacing: 14) {
+                                    Label(record.runsAtLoad ? "Run at login" : "Not marked RunAtLoad", systemImage: "arrow.clockwise")
+                                    Label(record.keepsAlive ? "KeepAlive enabled" : "No KeepAlive flag", systemImage: "repeat")
+                                }.font(.caption).foregroundStyle(.secondary)
+                            }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 4)
+                        }
+                    }
+                } else if selectedFolder != nil && !isScanning && errorMessage == nil {
+                    ContentUnavailableView("No login agents found", systemImage: "tray", description: Text("No valid plist records were found in the selected folder."))
+                } else {
+                    ContentUnavailableView("Review background items", systemImage: "slider.horizontal.3", description: Text("Choose your user LaunchAgents folder to inspect login jobs."))
+                }
+                GroupBox("What this screen does not do") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        safetyNote("Does not unload or disable launch agents")
+                        safetyNote("Does not edit plist files or change login settings")
+                        safetyNote("Does not inspect system LaunchDaemons or other users")
+                        safetyNote("Does not claim every listed job is unnecessary or safe to remove")
+                    }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 6)
+                }
+            }.padding(26)
+        }
+        .overlay { if isScanning { ProgressView("Scanning…").padding(18).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12)) } }
+    }
+
+    private func chooseFolder() {
+        let panel = NSOpenPanel()
+        panel.title = "Choose your user LaunchAgents folder"
+        panel.message = "MacPilot will only read plist metadata in ~/Library/LaunchAgents."
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.canCreateDirectories = false
+        panel.directoryURL = inventory.permittedRoot
+        panel.prompt = "Choose Folder"
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        selectedFolder = url
+        scanSelectedFolder()
+    }
+
+    private func scanSelectedFolder() {
+        guard let selectedFolder else { return }
+        isScanning = true
+        errorMessage = nil
+        let hasAccess = selectedFolder.startAccessingSecurityScopedResource()
+        defer {
+            if hasAccess { selectedFolder.stopAccessingSecurityScopedResource() }
+            isScanning = false
+        }
+        do {
+            let result = try inventory.scan(selectedFolder)
+            records = result.records
+            skippedCount = result.skippedCount
+            truncated = result.truncated
+        } catch LaunchAgentInventoryError.unapprovedRoot {
+            records = []
+            errorMessage = "For safety, only ~/Library/LaunchAgents can be scanned."
+        } catch {
+            records = []
+            errorMessage = "The selected folder could not be read. Check macOS privacy permissions and try again."
+        }
+    }
+
+    private func summaryMetric(_ title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(value).font(.title2.bold()).monospacedDigit()
+            Text(title).font(.caption).foregroundStyle(.secondary)
+        }.frame(maxWidth: .infinity, alignment: .leading).padding(12)
+            .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    private func safetyNote(_ value: String) -> some View {
+        Label(value, systemImage: "checkmark.shield").font(.caption).foregroundStyle(.secondary)
     }
 }
+
 
 struct FeaturePlaceholderView: View {
     let title: String
