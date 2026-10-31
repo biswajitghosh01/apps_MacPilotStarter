@@ -88,7 +88,7 @@ struct MainShellView: View {
                     .font(.system(size: 17))
                     .foregroundStyle(.green)
                     .padding(.bottom, 18)
-                    .help("Safe Mode — protected locations only")
+                    .help("Safe Mode — approved locations only")
             } else {
                 HStack(spacing: 9) {
                     Image(systemName: "checkmark.shield.fill")
@@ -96,7 +96,7 @@ struct MainShellView: View {
                         .foregroundStyle(.green)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Safe Mode").font(.system(size: 12, weight: .semibold))
-                        Text("Protected locations only")
+                        Text("Approved locations only")
                             .font(.system(size: 10))
                             .foregroundStyle(.secondary)
                     }
