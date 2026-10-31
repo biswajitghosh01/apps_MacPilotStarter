@@ -229,3 +229,9 @@ xcodebuild -list -project MacPilot.xcodeproj
 ```
 
 Do not submit an archive while either target still uses a `com.example` identifier.
+
+
+## Phase 5.1 – Read-only Performance telemetry
+
+The Performance screen samples macOS system load averages and VM memory page counters every five seconds. Load average is not CPU utilisation; the interface labels it separately and compares it with logical processor count. Memory figures are estimates and may not match Activity Monitor's memory-pressure display. No process termination, priority changes, privileged commands or system setting changes are performed.
+
