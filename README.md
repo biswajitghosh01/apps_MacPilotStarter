@@ -1,6 +1,6 @@
 # MacPilot
 
-MacPilot is a native SwiftUI macOS utility built around a safety-first design. The current Phase 4 package contains the system overview, read-only storage analysis, individually approved cache/log files moved to macOS Trash, and a constrained Application Manager.
+MacPilot is a native SwiftUI macOS utility built around a safety-first design. The current development branch builds on Phase 4 and adds read-only Performance telemetry: system load averages and estimated VM memory page counters. The Debloat Manager remains a planned, inventory-only milestone. The package contains the system overview, read-only storage analysis, individually approved cache/log files moved to macOS Trash, and a constrained Application Manager.
 
 **Important:** The App Manager scans only direct `.app` bundles in a user-selected `/Applications` or `~/Applications` folder. The direct-download build can move one reviewed third-party `.app` bundle to macOS Trash. It does not remove support files, preferences, containers, keychain records, login items, helper tools, services or user documents. The App Store target is inventory-only for application removal. No system app deletion, root escalation or permanent deletion is provided.
 
