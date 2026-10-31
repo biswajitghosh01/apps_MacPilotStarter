@@ -240,3 +240,8 @@ The Performance screen samples macOS system load averages and VM memory page cou
 ## Phase 5.2 – Read-only Debloat inventory
 
 Debloat Manager can inspect plist metadata in the current user's `~/Library/LaunchAgents` folder only. It does not inspect system LaunchDaemons or other users, and it does not unload, disable, edit or delete any service. A login agent is not automatically considered unnecessary; review its publisher and purpose independently before making changes in macOS settings.
+
+
+## Smart Cleanup layout correction (0.6.1 development)
+
+The candidate review uses its own bounded, vertically scrollable list. Selection controls and the Move to Trash summary remain outside that scrolling region, below the list, so a large candidate set cannot overlap the footer or scan warnings. This is a presentation-only correction; scan limits, selection rules, confirmation and Trash-only execution are unchanged.
