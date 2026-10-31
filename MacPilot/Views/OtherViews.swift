@@ -142,8 +142,8 @@ struct SettingsView: View {
             GroupBox("About") {
                 VStack(alignment: .leading, spacing: 8) {
                     LabeledContent("Application", value: "MacPilot")
-                    LabeledContent("Version", value: "0.4.0")
-                    LabeledContent("Build", value: "Phase 4 · Application Manager")
+                    LabeledContent("Version", value: "0.5.0")
+                    LabeledContent("Build", value: "Phase 5 · Performance telemetry")
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 6)
