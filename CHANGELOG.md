@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased – Performance telemetry
+
+- Added five-second, read-only system load-average sampling and VM memory page estimates.
+- Added a live Performance screen with measurement caveats and manual refresh.
+- Added unit tests for load normalization and safe percentage formatting.
+
+
 ## Unreleased – Build configuration hardening
 
 - Corrected the App Store target to use a bundle identifier distinct from the direct-download target.
