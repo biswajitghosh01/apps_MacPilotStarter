@@ -147,6 +147,84 @@ struct DebloatView: View {
 }
 
 
+struct PerformanceView: View {
+    @StateObject private var monitor = PerformanceMonitor()
+    private var reading: PerformanceReading? { monitor.reading }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 22) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Performance").font(.system(size: 28, weight: .bold, design: .rounded))
+                    Text("Live, read-only system health measurements. Refreshes every five seconds.")
+                        .font(.subheadline).foregroundStyle(.secondary)
+                }
+                if let reading {
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)], spacing: 14) {
+                        performanceCard(title: "1-minute system load", value: reading.oneMinuteLoadAverage.map { String(format: "%.2f", $0) } ?? "Unavailable", detail: "Runnable and uninterruptible tasks", symbol: "gauge.with.dots.needle.67percent", tint: .blue)
+                        performanceCard(title: "Logical processors", value: "\(reading.logicalProcessorCount)", detail: "macOS-reported processing units", symbol: "cpu", tint: .purple)
+                        performanceCard(title: "Memory in use", value: SystemSnapshot.bytes(reading.memoryUsedBytes), detail: "Estimated active, inactive, wired and compressed pages", symbol: "memorychip", tint: .orange)
+                        performanceCard(title: "Memory available", value: SystemSnapshot.bytes(reading.memoryAvailableBytes), detail: "Free pages reported by the VM subsystem", symbol: "memorychip.fill", tint: .green)
+                    }
+                    GroupBox("System load history") {
+                        VStack(alignment: .leading, spacing: 12) {
+                            loadRow("1 minute", value: reading.oneMinuteLoadAverage)
+                            loadRow("5 minutes", value: reading.fiveMinuteLoadAverage)
+                            loadRow("15 minutes", value: reading.fifteenMinuteLoadAverage)
+                            Divider()
+                            Text("Load average is not a CPU percentage. Compare it with the \(reading.logicalProcessorCount) logical processors to understand relative system demand.")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }.padding(.vertical, 6)
+                    }
+                    HStack(spacing: 8) {
+                        Image(systemName: "clock").foregroundStyle(.secondary)
+                        Text("Last updated \(reading.sampledAt.formatted(date: .omitted, time: .standard))")
+                            .font(.caption).foregroundStyle(.secondary)
+                        Spacer()
+                        Button("Refresh now") { monitor.refresh() }.buttonStyle(.bordered)
+                    }
+                } else {
+                    VStack(spacing: 10) {
+                        Image(systemName: "waveform.path").font(.system(size: 30)).foregroundStyle(.secondary)
+                        Text("Telemetry unavailable").font(.headline)
+                        Text("macOS did not return a valid performance sample. Try refreshing.")
+                            .font(.caption).foregroundStyle(.secondary)
+                        Button("Retry") { monitor.refresh() }
+                    }.frame(maxWidth: .infinity).padding(28)
+                }
+                GroupBox("Measurement notes") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("Read-only system APIs", systemImage: "checkmark.shield")
+                        Text("MacPilot does not change process priority, terminate processes, alter system settings or run privileged commands.")
+                            .font(.caption).foregroundStyle(.secondary)
+                        Text("Memory figures are an estimate based on VM page counters. They may not match Activity Monitor's memory-pressure presentation exactly.")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 6)
+                }
+            }.padding(26)
+        }
+    }
+
+    private func performanceCard(title: String, value: String, detail: String, symbol: String, tint: Color) -> some View {
+        VStack(alignment: .leading, spacing: 9) {
+            Label(title, systemImage: symbol).font(.subheadline.weight(.medium)).foregroundStyle(tint)
+            Text(value).font(.system(size: 25, weight: .bold, design: .rounded)).monospacedDigit().lineLimit(1).minimumScaleFactor(0.75)
+            Text(detail).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(16).frame(maxWidth: .infinity, minHeight: 126, alignment: .leading)
+        .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.primary.opacity(0.07), lineWidth: 1))
+    }
+
+    private func loadRow(_ title: String, value: Double?) -> some View {
+        HStack {
+            Text(title).foregroundStyle(.secondary)
+            Spacer()
+            Text(value.map { String(format: "%.2f", $0) } ?? "Unavailable").monospacedDigit().fontWeight(.semibold)
+        }.font(.subheadline)
+    }
+}
+
 struct FeaturePlaceholderView: View {
     let title: String
     let subtitle: String
