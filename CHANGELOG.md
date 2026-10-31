@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased – Debloat inventory
+
+- Replaced the Debloat placeholder with a read-only inventory of the current user's LaunchAgents plist metadata.
+- Restricted scanning to direct children of `~/Library/LaunchAgents`; rejected other and symlink roots.
+- Added a 500-file cap, malformed-file handling and unit tests for root restrictions and non-modification.
+- No unload, disable, edit or delete controls are provided.
+
+
 ## Unreleased – Performance telemetry
 
 - Added five-second, read-only system load-average sampling and VM memory page estimates.
