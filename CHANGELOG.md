@@ -1,3 +1,9 @@
+## 0.6.1 (development)
+
+- Fixed Smart Cleanup candidate-list layout by placing the results in a bounded, independently scrollable list.
+- Kept the selection summary and Move to Trash action in normal document flow below the list so they cannot paint over candidate rows.
+- Preserved all scan truncation, selection, confirmation and Trash-only safety behaviour.
+
 ## 0.6.0 (development)
 
 - Increased the read-only Storage Analyzer traversal limit from 50,000 to 250,000 entries.
