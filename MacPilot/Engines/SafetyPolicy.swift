@@ -24,7 +24,7 @@ struct SafetyPolicy: Sendable {
     }
 
     var permittedScanRoots: [URL] {
-        [cachesRoot, logsRoot, homeDirectory.appendingPathComponent(".Trash", isDirectory: true)]
+        [cachesRoot, logsRoot]
     }
 
     var protectedPathsForDisplay: [String] {
@@ -52,7 +52,7 @@ struct SafetyPolicy: Sendable {
             isSameOrDescendant(target, of: $0.standardizedFileURL.path)
         }
         guard permitted else {
-            return .blocked("Analysis is limited to the user's Caches, Logs or Trash folders.")
+            return .blocked("Storage analysis is limited to the user's Caches and Logs folders. Trash is not a scan location.")
         }
 
         let protectedAbsoluteRoots = ["/System", "/usr", "/bin", "/sbin", "/private", "/Library", "/Applications", "/Volumes"]
