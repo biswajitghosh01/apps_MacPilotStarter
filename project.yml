@@ -1,0 +1,88 @@
+name: MacPilot
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    macOS: "13.0"
+  generateEmptyDirectories: true
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.4.0"
+    CURRENT_PROJECT_VERSION: "4"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+    ARCHS: "$(ARCHS_STANDARD)"
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_HARDENED_RUNTIME: YES
+
+targets:
+  MacPilot:
+    type: application
+    platform: macOS
+    deploymentTarget: "13.0"
+    scheme:
+      testTargets:
+        - MacPilotTests
+    sources:
+      - path: MacPilot
+        excludes:
+          - MacPilot.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.macpilot
+        PRODUCT_NAME: MacPilot
+        INFOPLIST_KEY_CFBundleName: MacPilot
+        INFOPLIST_KEY_CFBundleDisplayName: MacPilot
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_ENTITLEMENTS: MacPilot/MacPilot.entitlements
+        ENABLE_APP_SANDBOX: YES
+  MacPilotAppStore:
+    type: application
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - path: MacPilot
+        excludes:
+          - MacPilot.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.macpilot
+        PRODUCT_NAME: MacPilotAppStore
+        INFOPLIST_KEY_CFBundleName: MacPilot
+        INFOPLIST_KEY_CFBundleDisplayName: MacPilot
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_ENTITLEMENTS: MacPilot/MacPilot.entitlements
+        ENABLE_APP_SANDBOX: YES
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) APP_STORE_EDITION"
+  MacPilotTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - path: Tests/UnitTests
+    dependencies:
+      - target: MacPilot
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.macpilot.tests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.0"
+
+schemes:
+  MacPilot-AppStore:
+    build:
+      targets:
+        MacPilotAppStore: all
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
