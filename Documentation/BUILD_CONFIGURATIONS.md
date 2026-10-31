@@ -7,7 +7,7 @@ MacPilot has two application targets that compile the same Swift source tree.
 | `MacPilot` | `MacPilot` | Shows first-use risk acknowledgement until accepted | Development and direct-distribution base |
 | `MacPilot-AppStore` | `MacPilotAppStore` | Does not gate launch behind a license/acceptance screen | Mac App Store candidate |
 
-Both targets use App Sandbox and the user-selected read-write file entitlement. This entitlement is used only for files or folders the user explicitly selects through the standard open panel; it does not grant unrestricted filesystem access. The selected folder is constrained again by MacPilot's own cleanup allowlist. Review this entitlement against current App Store requirements before submission.
+The direct target retains the existing placeholder identifier `com.example.macpilot`; the App Store target uses the distinct placeholder identifier `com.example.macpilot.appstore`. Replace both with identifiers registered to the developer before distribution. The direct identifier is intentionally unchanged to avoid breaking an existing direct-build installation. Both targets use App Sandbox and the user-selected read-write file entitlement. This entitlement is used only for files or folders the user explicitly selects through the standard open panel; it does not grant unrestricted filesystem access. The selected folder is constrained again by MacPilot's own cleanup allowlist. Review this entitlement against current App Store requirements before submission.
 
 The App Store target uses a distinct internal product name to avoid build-product collisions; its bundle display name remains MacPilot.
 

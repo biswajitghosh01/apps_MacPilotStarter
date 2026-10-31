@@ -1,5 +1,27 @@
 # Changelog
 
+## Unreleased – Debloat inventory
+
+- Replaced the Debloat placeholder with a read-only inventory of the current user's LaunchAgents plist metadata.
+- Restricted scanning to direct children of `~/Library/LaunchAgents`; rejected other and symlink roots.
+- Added a 500-file cap, malformed-file handling and unit tests for root restrictions and non-modification.
+- No unload, disable, edit or delete controls are provided.
+
+
+## Unreleased – Performance telemetry
+
+- Added five-second, read-only system load-average sampling and VM memory page estimates.
+- Added a live Performance screen with measurement caveats and manual refresh.
+- Added unit tests for load normalization and safe percentage formatting.
+
+
+## Unreleased – Build configuration hardening
+
+- Corrected the App Store target to use a bundle identifier distinct from the direct-download target.
+- Preserved the existing direct-build identifier; both identifiers remain placeholders until replaced with developer-owned registered IDs.
+- Documented the required XcodeGen regeneration step after project-spec changes.
+
+
 ## 0.4.0 – Phase 4: Application Manager
 
 - Added a read-only inventory of direct `.app` bundles in a user-selected `/Applications` or `~/Applications` folder.

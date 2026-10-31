@@ -1,6 +1,6 @@
 # MacPilot
 
-MacPilot is a native SwiftUI macOS utility built around a safety-first design. The current Phase 4 package contains the system overview, read-only storage analysis, individually approved cache/log files moved to macOS Trash, and a constrained Application Manager.
+MacPilot is a native SwiftUI macOS utility built around a safety-first design. The current development branch builds on Phase 4 and adds read-only Performance telemetry: system load averages and estimated VM memory page counters. The Debloat Manager remains a planned, inventory-only milestone. The package contains the system overview, read-only storage analysis, individually approved cache/log files moved to macOS Trash, and a constrained Application Manager.
 
 **Important:** The App Manager scans only direct `.app` bundles in a user-selected `/Applications` or `~/Applications` folder. The direct-download build can move one reviewed third-party `.app` bundle to macOS Trash. It does not remove support files, preferences, containers, keychain records, login items, helper tools, services or user documents. The App Store target is inventory-only for application removal. No system app deletion, root escalation or permanent deletion is provided.
 
@@ -215,3 +215,28 @@ cd "/absolute/path/to/your/MacPilotStarter"
 7. Repeat with a bundle ID beginning `com.apple.`, a symlink bundle, a nested app and a currently running app; each must be blocked or excluded.
 
 Do not begin by testing an app from your main `/Applications` folder. Use a disposable test account or VM. App bundle removal is destructive even though it uses Trash, and restoration is not guaranteed in every filesystem condition.
+
+
+## Phase 4.1 – Build identity correction
+
+The direct and App Store targets must have distinct bundle identifiers. The direct target retains the existing starter identifier `com.example.macpilot`; the App Store target uses `com.example.macpilot.appstore`. Both are placeholders and must be replaced with identifiers registered to the developer before distribution. The direct identifier is intentionally preserved to avoid changing the identity of an existing direct-build installation.
+
+After changing `project.yml`, regenerate the Xcode project before building:
+
+```bash
+xcodegen generate --spec project.yml
+xcodebuild -list -project MacPilot.xcodeproj
+```
+
+Do not submit an archive while either target still uses a `com.example` identifier.
+
+
+## Phase 5.1 – Read-only Performance telemetry
+
+The Performance screen samples macOS system load averages and VM memory page counters every five seconds. Load average is not CPU utilisation; the interface labels it separately and compares it with logical processor count. Memory figures are estimates and may not match Activity Monitor's memory-pressure display. No process termination, priority changes, privileged commands or system setting changes are performed.
+
+
+
+## Phase 5.2 – Read-only Debloat inventory
+
+Debloat Manager can inspect plist metadata in the current user's `~/Library/LaunchAgents` folder only. It does not inspect system LaunchDaemons or other users, and it does not unload, disable, edit or delete any service. A login agent is not automatically considered unnecessary; review its publisher and purpose independently before making changes in macOS settings.

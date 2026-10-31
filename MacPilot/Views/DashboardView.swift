@@ -146,7 +146,7 @@ struct DashboardView: View {
 
                 HStack(spacing: 9) {
                     Image(systemName: "info.circle.fill").foregroundStyle(.blue)
-                    Text("CPU utilisation and live memory pressure are not yet measured. This dashboard shows verified hardware and storage information only.")
+                    Text("Live system load and estimated memory page counters are available in Performance. MacPilot does not present load average as CPU utilisation or VM page estimates as macOS memory pressure.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

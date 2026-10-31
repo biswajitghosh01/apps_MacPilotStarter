@@ -36,3 +36,13 @@ The executor revalidates paths, file types, hard-link count and a `lstat` finger
 `ApplicationInventoryScanner` inspects a user-selected standard Applications folder. `ApplicationSafetyPolicy` limits roots to `/Applications` and `~/Applications`, validates direct-child `.app` packages and rejects symlink redirects, Apple bundle identifiers, nested application folders and cross-volume app bundles. Package sizing is a bounded metadata estimate and may be reported as a lower bound.
 
 `ApplicationUninstaller` is excluded from `APP_STORE_EDITION`. In the direct build it accepts exactly one `InstalledApplication` record, revalidates its bundle fingerprint, ensures the target is not running, coordinates the move and delegates to the shared Trash mover. Associated app data is intentionally outside this phase.
+
+
+## Phase 5.1 – Performance telemetry
+
+`PerformanceMonitor` samples the system load average through `getloadavg` and reads VM page counters through `host_statistics64`. The monitor is read-only and does not claim load average is CPU utilisation. Memory in-use and available figures are page-counter estimates; they are not a replacement for macOS Memory Pressure. Sampling is limited to one update every five seconds while the Performance screen is active.
+
+
+## Phase 5.2 – Login agent inventory
+
+`LaunchAgentInventory` reads direct-child plist metadata only from the current user's `~/Library/LaunchAgents`. It rejects other roots and symlink roots, skips hidden/non-regular files, caps the inventory at 500 plist files, and never loads, unloads, edits, disables or deletes jobs. The screen is an inspection aid, not a recommendation engine: the presence of a login agent does not mean it is unnecessary.
