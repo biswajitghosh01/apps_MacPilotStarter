@@ -41,3 +41,8 @@ The executor revalidates paths, file types, hard-link count and a `lstat` finger
 ## Phase 5.1 – Performance telemetry
 
 `PerformanceMonitor` samples the system load average through `getloadavg` and reads VM page counters through `host_statistics64`. The monitor is read-only and does not claim load average is CPU utilisation. Memory in-use and available figures are page-counter estimates; they are not a replacement for macOS Memory Pressure. Sampling is limited to one update every five seconds while the Performance screen is active.
+
+
+## Phase 5.2 – Login agent inventory
+
+`LaunchAgentInventory` reads direct-child plist metadata only from the current user's `~/Library/LaunchAgents`. It rejects other roots and symlink roots, skips hidden/non-regular files, caps the inventory at 500 plist files, and never loads, unloads, edits, disables or deletes jobs. The screen is an inspection aid, not a recommendation engine: the presence of a login agent does not mean it is unnecessary.
