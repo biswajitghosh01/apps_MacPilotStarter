@@ -1,6 +1,6 @@
 # MacPilot
 
-MacPilot is a native SwiftUI macOS utility built around a safety-first design. The current development branch builds on Phase 4 and adds read-only Performance telemetry: system load averages and estimated VM memory page counters. The Debloat Manager remains a planned, inventory-only milestone. The package contains the system overview, read-only storage analysis, individually approved cache/log files moved to macOS Trash, and a constrained Application Manager.
+MacPilot is a native SwiftUI macOS utility built around a safety-first design. The current development branch builds on Phase 4 and adds read-only Performance telemetry: system load averages and estimated VM memory page counters. The Debloat Manager remains a planned, inventory-only milestone. The package contains the system overview, read-only storage analysis, Smart Cleanup for individually selected eligible cache/log files moved to macOS Trash, and a constrained Application Manager.
 
 **Important:** The App Manager scans only direct `.app` bundles in a user-selected `/Applications` or `~/Applications` folder. The direct-download build can move one reviewed third-party `.app` bundle to macOS Trash. It does not remove support files, preferences, containers, keychain records, login items, helper tools, services or user documents. The App Store target is inventory-only for application removal. No system app deletion, root escalation or permanent deletion is provided.
 
@@ -127,7 +127,7 @@ Phase 3 adds a distinct `CleanupCandidateScanner` and `CleanupExecutor`. The can
 
 ### Cleanup execution
 
-The user selects files individually and confirms a destructive action in a separate confirmation dialog. Before each move, MacPilot validates root containment, symlink status, file type, hard-link count and a filesystem identity fingerprint. It coordinates the operation through `NSFileCoordinator` and calls `FileManager.trashItem` for the exact file. Changed, inaccessible or policy-blocked items are skipped or reported. The app has no permanent-delete or recursive-folder-delete code path.
+The user selects files individually and confirms a destructive action in a separate confirmation dialog. Before each move, MacPilot validates root containment, symlink status, file type, hard-link count and a filesystem identity fingerprint. It coordinates the operation through `NSFileCoordinator` and calls `FileManager.trashItem` for the exact file. Changed, inaccessible or policy-blocked items are skipped or reported. The app has no permanent-delete or recursive-folder-delete code path. Use the **Smart Cleanup** section in the sidebar for this workflow; Storage Analyzer is intentionally read-only.
 
 The App Sandbox entitlement changes from user-selected read-only to user-selected read-write so the app can move files in a folder the user explicitly selects. This does not provide general access to the user's home directory. App Store review remains subject to Apple's review process; the feature and entitlement should be explained in review notes and revalidated against current requirements before submission.
 
