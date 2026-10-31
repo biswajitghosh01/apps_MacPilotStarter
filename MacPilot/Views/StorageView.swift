@@ -60,14 +60,12 @@ struct StorageView: View {
 
                 GroupBox("Inspect user storage") {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Select one of the approved folders. MacPilot will report file counts, observed sizes, file types and the largest files. It will not infer that these files are safe to delete.")
+                        Text("Select a folder under ~/Library/Caches or ~/Library/Logs. MacPilot reports file counts, observed sizes, file types and the largest files without changing files. Trash is excluded from storage scans.")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                         storageRootRow(title: "Application caches", path: "~/Library/Caches", symbol: "shippingbox")
                         Divider()
                         storageRootRow(title: "Application logs", path: "~/Library/Logs", symbol: "doc.text")
-                        Divider()
-                        storageRootRow(title: "Trash", path: "~/.Trash", symbol: "trash")
                     }
                     .padding(.vertical, 6)
                 }
