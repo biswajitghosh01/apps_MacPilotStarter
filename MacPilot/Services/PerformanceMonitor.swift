@@ -1,8 +1,6 @@
 import Foundation
 import Combine
 import Darwin
-import Mach
-
 struct PerformanceReading {
     let sampledAt: Date
     let oneMinuteLoadAverage: Double?
