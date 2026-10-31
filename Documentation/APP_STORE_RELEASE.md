@@ -31,3 +31,8 @@ Official links:
 The `APP_STORE_EDITION` compiles application removal out; the App Store build supports inventory only and directs users to Finder for uninstall. The direct-download build uses a user-selected standard Applications folder and a single-item Trash move. This separation avoids promising that App Store review will permit third-party app removal. Recheck the current App Review Guidelines and sandbox entitlements before submission.
 
 Apple's current Mac App Store-specific guideline 2.4.5(i) requires appropriate sandboxing and appropriate macOS APIs when modifying data stored by other apps. Guideline 2.5.2 also restricts access outside the app's designated container area, subject to the system's documented user-selected-file access mechanisms. The App Store edition therefore compiles third-party app removal out and exposes inventory only. The remaining user-selected cleanup functionality still requires a feature-by-feature App Review assessment; do not assume approval from successful local sandbox tests.
+
+
+## App Store policy assessment before submission
+
+The cleanup feature uses the standard user-selected folder panel, the App Sandbox user-selected read-write entitlement, coordinated file operations, and `FileManager.trashItem`. This is the intended least-privilege design, but it is not a guarantee of App Review approval: cache and log files can be data created by other apps, so the feature must be clearly disclosed and justified under guideline 2.4.5(i) and sandbox rules. Include explicit review notes and a reproducible review flow. If review feedback indicates that cross-app cache cleanup is not acceptable, ship the App Store edition with read-only analysis and retain cleanup only in the separately distributed direct edition.
