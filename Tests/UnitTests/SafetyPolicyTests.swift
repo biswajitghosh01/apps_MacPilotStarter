@@ -243,6 +243,40 @@ final class SafetyPolicyTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: executable.path))
     }
 
+    func testCleanupScannerMarksResultWhenEntryLimitIsReached() throws {
+        let caches = testHome.appendingPathComponent("Library/Caches", isDirectory: true)
+        let first = caches.appendingPathComponent("first.cache")
+        let second = caches.appendingPathComponent("second.cache")
+        try Data(repeating: 0x31, count: 2048).write(to: first)
+        try Data(repeating: 0x32, count: 2048).write(to: second)
+        let oldDate = Date().addingTimeInterval(-60 * 24 * 60 * 60)
+        try FileManager.default.setAttributes([.modificationDate: oldDate], ofItemAtPath: first.path)
+        try FileManager.default.setAttributes([.modificationDate: oldDate], ofItemAtPath: second.path)
+        let rules = CleanupRules(minimumAgeDays: 30, minimumFileSizeBytes: 1024, maximumScanEntries: 1, maximumCandidates: 20, maximumItemsPerBatch: 100)
+
+        let result = try CleanupCandidateScanner(safetyPolicy: policy, rules: rules).scan(caches)
+
+        XCTAssertTrue(result.wasTruncated)
+        XCTAssertLessThanOrEqual(result.visitedCount, 2)
+    }
+
+    func testCleanupScannerMarksCandidateCapAsIncomplete() throws {
+        let caches = testHome.appendingPathComponent("Library/Caches", isDirectory: true)
+        let first = caches.appendingPathComponent("first.cache")
+        let second = caches.appendingPathComponent("second.cache")
+        try Data(repeating: 0x41, count: 2048).write(to: first)
+        try Data(repeating: 0x42, count: 2048).write(to: second)
+        let oldDate = Date().addingTimeInterval(-60 * 24 * 60 * 60)
+        try FileManager.default.setAttributes([.modificationDate: oldDate], ofItemAtPath: first.path)
+        try FileManager.default.setAttributes([.modificationDate: oldDate], ofItemAtPath: second.path)
+        let rules = CleanupRules(minimumAgeDays: 30, minimumFileSizeBytes: 1024, maximumScanEntries: 100, maximumCandidates: 1, maximumItemsPerBatch: 100)
+
+        let result = try CleanupCandidateScanner(safetyPolicy: policy, rules: rules).scan(caches)
+
+        XCTAssertTrue(result.wasTruncated)
+        XCTAssertEqual(result.candidates.count, 1)
+    }
+
     func testCleanupScannerSkipsHardLinkedFiles() throws {
         let caches = testHome.appendingPathComponent("Library/Caches", isDirectory: true)
         let file = caches.appendingPathComponent("linked.cache")

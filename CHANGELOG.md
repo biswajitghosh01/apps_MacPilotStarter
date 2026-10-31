@@ -1,3 +1,10 @@
+## 0.6.0 (development)
+
+- Increased the read-only Storage Analyzer traversal limit from 50,000 to 250,000 entries.
+- Increased Smart Cleanup traversal limit from 20,000 to 250,000 entries and candidate review cap from 250 to 2,000.
+- Added regression tests ensuring both traversal-limit and candidate-limit truncation are detected; cleanup remains disabled for incomplete scans.
+- Retained individual selection, per-file fingerprint revalidation, batch limits and macOS Trash-only movement. No permanent deletion or recursive folder deletion was added.
+
 # Changelog
 
 ## Unreleased – Debloat inventory

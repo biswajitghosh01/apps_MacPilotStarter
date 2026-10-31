@@ -1,6 +1,6 @@
 # MacPilot
 
-MacPilot is a native SwiftUI macOS utility built around a safety-first design. The current development branch builds on Phase 4 and adds read-only Performance telemetry: system load averages and estimated VM memory page counters. The Debloat Manager remains a planned, inventory-only milestone. The package contains the system overview, read-only storage analysis, individually approved cache/log files moved to macOS Trash, and a constrained Application Manager.
+MacPilot is a native SwiftUI macOS utility built around a safety-first design. The current development branch builds on Phase 4 and adds read-only Performance telemetry: system load averages and estimated VM memory page counters. The Debloat Manager remains a planned, inventory-only milestone. The package contains the system overview, read-only storage analysis, Smart Cleanup for individually selected eligible cache/log files moved to macOS Trash, and a constrained Application Manager.
 
 **Important:** The App Manager scans only direct `.app` bundles in a user-selected `/Applications` or `~/Applications` folder. The direct-download build can move one reviewed third-party `.app` bundle to macOS Trash. It does not remove support files, preferences, containers, keychain records, login items, helper tools, services or user documents. The App Store target is inventory-only for application removal. No system app deletion, root escalation or permanent deletion is provided.
 
@@ -83,7 +83,7 @@ Scan reports contain:
 - A file-extension breakdown (up to 12 groups).
 - Skipped/unreadable item counts and a visible truncation warning when the configured scan-entry cap is reached.
 
-The observed bytes are not represented as guaranteed reclaimable storage. Directory packages are not traversed, symbolic links are skipped, and scans are capped at 50,000 entries to bound resource use. Scanned file paths are shown in-memory for review and are not written to the SQLite audit log.
+The observed bytes are not represented as guaranteed reclaimable storage. Directory packages are not traversed, symbolic links are skipped, and scans are capped at 250,000 entries to bound resource use. Scanned file paths are shown in-memory for review and are not written to the SQLite audit log.
 
 ### Upgrade an existing Phase 1 checkout
 
@@ -103,7 +103,7 @@ Use the bundle identifier you already selected when running the bootstrap. Do no
 
 The XCTest suite covers the permitted cache root, system/protected path denial, symlink-root denial, read-only behaviour, file-size and extension summaries, symlink-entry exclusion, and scan-entry truncation.
 
-Phase 3 adds a bounded, separately tested Trash-only workflow. See the section below for its current limits and remaining risks.
+Phase 3 adds a bounded, separately tested Trash-only workflow. The entry and candidate caps are conservative resource limits; reaching either cap marks the scan incomplete and disables cleanup until a complete scan is available. See the section below for its current limits and remaining risks.
 
 
 ## Phase 2.1 test-fixture correction
@@ -122,12 +122,12 @@ Phase 3 adds a distinct `CleanupCandidateScanner` and `CleanupExecutor`. The can
 - Current-user-owned, non-executable regular files only; no folders, package descendants, symbolic links, hidden files, special files, nested mount points or files with multiple hard links.
 - Excludes database, SQLite, preference, JSON, lock, PID, socket, key, certificate and provisioning-profile extensions.
 - Skips selected browser and personal-communication cache path markers.
-- Maximum 20,000 enumerated entries and 250 candidates per scan. Incomplete scans disable cleanup.
+- Maximum 250,000 enumerated entries and 2,000 candidates per scan. Incomplete scans disable cleanup.
 - Maximum 100 individually selected files per cleanup batch. No default selection is made.
 
 ### Cleanup execution
 
-The user selects files individually and confirms a destructive action in a separate confirmation dialog. Before each move, MacPilot validates root containment, symlink status, file type, hard-link count and a filesystem identity fingerprint. It coordinates the operation through `NSFileCoordinator` and calls `FileManager.trashItem` for the exact file. Changed, inaccessible or policy-blocked items are skipped or reported. The app has no permanent-delete or recursive-folder-delete code path.
+The user selects files individually and confirms a destructive action in a separate confirmation dialog. Before each move, MacPilot validates root containment, symlink status, file type, hard-link count and a filesystem identity fingerprint. It coordinates the operation through `NSFileCoordinator` and calls `FileManager.trashItem` for the exact file. Changed, inaccessible or policy-blocked items are skipped or reported. The app has no permanent-delete or recursive-folder-delete code path. Use the **Smart Cleanup** section in the sidebar for this workflow; Storage Analyzer is intentionally read-only.
 
 The App Sandbox entitlement changes from user-selected read-only to user-selected read-write so the app can move files in a folder the user explicitly selects. This does not provide general access to the user's home directory. App Store review remains subject to Apple's review process; the feature and entitlement should be explained in review notes and revalidated against current requirements before submission.
 

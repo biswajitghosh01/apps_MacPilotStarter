@@ -69,7 +69,7 @@ struct ReadOnlyScanner {
 
     init(
         safetyPolicy: SafetyPolicy = SafetyPolicy(),
-        maximumEntries: Int = 50_000,
+        maximumEntries: Int = 250_000,
         maximumLargestFiles: Int = 20,
         maximumExtensionGroups: Int = 12
     ) {
