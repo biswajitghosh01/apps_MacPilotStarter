@@ -1,4 +1,5 @@
 import Foundation
+import Darwin
 
 struct LaunchAgentRecord: Identifiable {
     let id: String
