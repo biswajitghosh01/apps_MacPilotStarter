@@ -1,0 +1,64 @@
+name: macOS Build and Test
+
+on:
+  push:
+    branches:
+      - main
+      - "feature/**"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  macos:
+    runs-on: macos-14
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          XCODE_PATH="$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -n 1)"
+          if [[ -n "$XCODE_PATH" ]]; then
+            sudo xcode-select --switch "$XCODE_PATH/Contents/Developer"
+          fi
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate --spec project.yml
+
+      - name: Verify schemes
+        run: xcodebuild -list -project MacPilot.xcodeproj
+
+      - name: Run unit tests
+        run: |
+          set -o pipefail
+          xcodebuild -project MacPilot.xcodeproj \
+            -scheme MacPilot \
+            -destination 'platform=macOS' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO test | tee build-tests.log
+
+      - name: Build App Store variant
+        run: |
+          xcodebuild -project MacPilot.xcodeproj \
+            -scheme MacPilot-AppStore \
+            -destination 'platform=macOS' \
+            -derivedDataPath build/AppStoreDerivedData \
+            CODE_SIGNING_ALLOWED=NO build
+
+      - name: Upload test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build-test-log
+          path: build-tests.log
+          if-no-files-found: ignore
