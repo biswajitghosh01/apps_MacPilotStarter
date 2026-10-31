@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased – Build configuration hardening
+
+- Corrected the App Store target to use a bundle identifier distinct from the direct-download target.
+- Preserved the existing direct-build identifier; both identifiers remain placeholders until replaced with developer-owned registered IDs.
+- Documented the required XcodeGen regeneration step after project-spec changes.
+
+
 ## 0.4.0 – Phase 4: Application Manager
 
 - Added a read-only inventory of direct `.app` bundles in a user-selected `/Applications` or `~/Applications` folder.
