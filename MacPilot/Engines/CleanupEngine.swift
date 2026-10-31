@@ -11,8 +11,8 @@ struct CleanupRules: Sendable {
     static let standard = CleanupRules(
         minimumAgeDays: 30,
         minimumFileSizeBytes: 1_024,
-        maximumScanEntries: 20_000,
-        maximumCandidates: 250,
+        maximumScanEntries: 250_000,
+        maximumCandidates: 2_000,
         maximumItemsPerBatch: 100
     )
 
