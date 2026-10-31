@@ -122,6 +122,11 @@ final class SafetyPolicyTests: XCTestCase {
         let caches = testHome.appendingPathComponent("Library/Caches", isDirectory: true)
         let logs = testHome.appendingPathComponent("Library/Logs", isDirectory: true)
         let trash = testHome.appendingPathComponent(".Trash", isDirectory: true)
+        XCTAssertEqual(policy.validateReadOnlyScanRoot(caches), .allowed)
+        XCTAssertEqual(policy.validateReadOnlyScanRoot(logs), .allowed)
+        guard case .blocked = policy.validateReadOnlyScanRoot(trash) else {
+            return XCTFail("Trash must not be an approved storage scan location")
+        }
         XCTAssertEqual(policy.validateCleanupRoot(caches), .allowed)
         XCTAssertEqual(policy.validateCleanupRoot(logs), .allowed)
         guard case .blocked = policy.validateCleanupRoot(trash) else {
