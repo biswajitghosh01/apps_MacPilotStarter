@@ -77,6 +77,24 @@ final class SafetyPolicyTests: XCTestCase {
         XCTAssertEqual(try Data(contentsOf: sample), bytes, "Read-only scan must not change file contents")
     }
 
+    func testReadOnlyScannerAllowsLogsAndRejectsTrash() throws {
+        let logs = testHome.appendingPathComponent("Library/Logs", isDirectory: true)
+        let trash = testHome.appendingPathComponent(".Trash", isDirectory: true)
+        let logFile = logs.appendingPathComponent("sample.log")
+        try FileManager.default.createDirectory(at: trash, withIntermediateDirectories: true)
+        try Data(repeating: 0x2A, count: 512).write(to: logFile)
+
+        let logsResult = try ReadOnlyScanner(safetyPolicy: policy).scan(logs)
+        XCTAssertEqual(logsResult.fileCount, 1)
+        XCTAssertEqual(logsResult.totalBytes, 512)
+
+        XCTAssertThrowsError(try ReadOnlyScanner(safetyPolicy: policy).scan(trash)) { error in
+            guard case ScanError.blocked = error else {
+                return XCTFail("Trash must be rejected by the scanner itself, not only by the UI")
+            }
+        }
+    }
+
     func testScannerReportsLargestFilesAndExtensionBreakdown() throws {
         let caches = testHome.appendingPathComponent("Library/Caches", isDirectory: true)
         let small = caches.appendingPathComponent("small.tmp")
