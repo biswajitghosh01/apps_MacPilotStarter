@@ -1,3 +1,11 @@
+## 0.6.1 (proposed safety clarification)
+
+- Replaced the misleading “Safe Mode” status label with “Guardrails active”; the status is informational and does not globally disable scans.
+- Corrected Safety Center wording: Storage Analyzer and Smart Cleanup allow Caches and Logs only; Trash is never a scan source.
+- Kept file removal explicitly reviewable and reversible through macOS Trash; no permanent or recursive deletion.
+- Corrected the Settings version/build display to 0.6.0 development, build 6.
+- Added a scanner-level regression test proving Logs can be scanned and Trash is rejected.
+
 ## 0.6.0 (development)
 
 - Increased the read-only Storage Analyzer traversal limit from 50,000 to 250,000 entries.
@@ -61,7 +69,7 @@
 - Added a dedicated Storage Analyzer screen with startup-volume capacity information.
 - Expanded read-only scanning to report file counts, folder counts, observed bytes, file-type breakdowns and the largest files.
 - Added explicit scan truncation reporting and bounded largest-file result storage.
-- Kept analysis within approved user Caches, Logs and Trash roots.
+- Restricted analysis to approved user Caches and Logs roots; Trash is excluded.
 - Added tests for largest-file ranking, extension summaries, symlink exclusion and scan limits.
 - Added the MacPilot propeller app icon and AppIcon asset catalog.
 

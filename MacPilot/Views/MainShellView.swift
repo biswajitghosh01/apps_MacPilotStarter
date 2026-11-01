@@ -88,15 +88,15 @@ struct MainShellView: View {
                     .font(.system(size: 17))
                     .foregroundStyle(.green)
                     .padding(.bottom, 18)
-                    .help("Safe Mode — approved locations only")
+                    .help("Safety guardrails active — approved scan locations")
             } else {
                 HStack(spacing: 9) {
                     Image(systemName: "checkmark.shield.fill")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(.green)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Safe Mode").font(.system(size: 12, weight: .semibold))
-                        Text("Approved locations only")
+                        Text("Safety guardrails").font(.system(size: 12, weight: .semibold))
+                        Text("Caches & Logs scans · reviewed Trash moves")
                             .font(.system(size: 10))
                             .foregroundStyle(.secondary)
                     }
@@ -172,8 +172,8 @@ struct MainShellView: View {
                 Image(systemName: "checkmark.shield.fill").foregroundStyle(.green)
                 if !compact {
                     VStack(alignment: .leading, spacing: 1) {
-                        Text("Safe Mode").font(.system(size: 11, weight: .semibold))
-                        Text("Only approved locations")
+                        Text("Guardrails active").font(.system(size: 11, weight: .semibold))
+                        Text("Scans are limited; cleanup is reviewed")
                             .font(.system(size: 9))
                             .foregroundStyle(.secondary)
                     }

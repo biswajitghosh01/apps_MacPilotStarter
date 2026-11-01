@@ -286,7 +286,7 @@ struct SafetyCenterView: View {
                 GroupBox("Current safeguards") {
                     VStack(alignment: .leading, spacing: 10) {
                         safetyRow("Metadata-only candidate scan", detail: "Candidate discovery reads filesystem metadata only and never opens file contents.")
-                        safetyRow("Separate scan and cleanup roots", detail: "Analysis can inspect user Caches, Logs or Trash. Cleanup is limited to user Caches and Logs; Trash is never a cleanup source.")
+                        safetyRow("Separate scan and cleanup roots", detail: "Storage analysis is read-only and limited to user Caches and Logs. Trash is excluded from scanning. Smart Cleanup can move only individually selected, revalidated files from Caches or Logs to Trash.")
                         safetyRow("Symlink rejection", detail: "Symbolic-link scan roots are blocked and symbolic-link entries are skipped.")
                         safetyRow("No privilege escalation", detail: "The app does not invoke sudo or request administrator credentials.")
                         safetyRow("Bounded cleanup", detail: "Cleanup scans are limited to 20,000 entries and 250 candidates. Each confirmation batch is limited to 100 individual files.")
@@ -344,8 +344,8 @@ struct SettingsView: View {
             GroupBox("About") {
                 VStack(alignment: .leading, spacing: 8) {
                     LabeledContent("Application", value: "MacPilot")
-                    LabeledContent("Version", value: "0.5.0")
-                    LabeledContent("Build", value: "Phase 5 · Performance telemetry")
+                    LabeledContent("Version", value: "0.6.0")
+                    LabeledContent("Build", value: "0.6.0 development · build 6")
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 6)
