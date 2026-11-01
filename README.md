@@ -30,6 +30,18 @@ MacPilotStarter/
 
 The starter source is provided under the MIT License in `LICENSE`. Replace the copyright holder placeholder before distributing modified versions.
 
+## Safety guardrails and file removal
+
+The “Guardrails active” status in the app chrome is informational; it is not a global lock that disables scanning. The app enforces its restrictions in the scanners and safety policy:
+
+- **Storage Analyzer** is read-only and accepts folders under the current user's `~/Library/Caches` and `~/Library/Logs` only. It never scans `~/.Trash`.
+- **Smart Cleanup** scans only those same approved roots. It proposes individual regular files that meet the age, size, ownership and file-safety rules. The user must select files and confirm each batch.
+- **Move to Trash** is the supported deletion workflow. It is reversible through Finder in most cases, but restoration is not guaranteed. MacPilot does not permanently delete files or recursively delete folders.
+- **Applications** has a separate, constrained app-bundle-to-Trash workflow in the direct-download edition; the App Store edition remains inventory-only.
+- Scanning and cleanup require the user to choose an approved folder through the macOS open panel. macOS privacy permissions and the app's sandbox entitlements still apply.
+
+A scan that reaches its configured traversal or candidate cap is marked incomplete, and cleanup is intentionally disabled for that result. Narrow the selected folder and scan again; do not bypass the incomplete-scan safeguard.
+
 ## Fixing a scheme test-action error
 
 If `xcodebuild test` reports that scheme `MacPilot` is not configured for the test action, regenerate the project after confirming that `project.yml` includes `MacPilotTests` under `schemes > MacPilot > test > targets`:
